@@ -112,47 +112,6 @@ public class MWConfig {
 		}
 	}
 
-	public static Refill refill = new Refill();
-
-	@AConfigBackground("textures/block/horn_coral_block.png")
-	public static class Refill {
-		public boolean enable = true;
-
-		public boolean playSound = true;
-
-		public boolean offHand = true;
-		public boolean restoreSelectedSlot = false;
-
-		public boolean itemChanges = true;
-
-		public boolean eat = true;
-		public boolean drop = true;
-		public boolean use = true;
-		public boolean other = true;
-
-		public Rules rules = new Rules();
-
-		@AConfigBackground("textures/block/yellow_terracotta.png")
-		public static class Rules {
-			public boolean anyBlock = false;
-			public boolean itemgroup = false;
-			public boolean itemHierarchy = false;
-			public boolean blockHierarchy = false;
-			public boolean food = false;
-			public boolean equalItems = true;
-			public boolean equalStacks = true;
-		}
-	}
-
-	public static ToolPicking toolPicking = new ToolPicking();
-
-	@AConfigBackground("textures/block/coarse_dirt.png")
-	public static class ToolPicking {
-		public boolean holdTool = true;
-		public boolean holdBlock = false;
-		public boolean pickFromInventory = true;
-	}
-
 	@AConfigFixer
 	public <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
 	void fixConfig(O dataObject, O rootObject) {

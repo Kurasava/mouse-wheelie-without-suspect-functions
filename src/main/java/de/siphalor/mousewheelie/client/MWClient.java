@@ -20,7 +20,6 @@ package de.siphalor.mousewheelie.client;
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.inventory.ToolPicker;
 import de.siphalor.mousewheelie.client.keybinding.*;
 import de.siphalor.mousewheelie.client.util.CreativeSearchOrder;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
@@ -54,7 +53,6 @@ public class MWClient implements ClientModInitializer {
 	public static final KeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.MOUSE, 2, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final KeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
 	public static final KeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
-	public static final KeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final ActionModifierKeybinding WHOLE_STACK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "whole_stack_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_SHIFT, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final ActionModifierKeybinding ALL_OF_KIND_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "all_of_kind_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_CONTROL, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final ActionModifierKeybinding DROP_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "drop_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, KEY_BINDING_CATEGORY, new KeyModifiers());
@@ -69,34 +67,12 @@ public class MWClient implements ClientModInitializer {
 		KeyBindingHelper.registerKeyBinding(SORT_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(SCROLL_UP_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN_KEY_BINDING);
-		KeyBindingHelper.registerKeyBinding(PICK_TOOL_KEY_BINDING);
 
 		KeyBindingHelper.registerKeyBinding(WHOLE_STACK_MODIFIER);
 		KeyBindingHelper.registerKeyBinding(ALL_OF_KIND_MODIFIER);
 		KeyBindingHelper.registerKeyBinding(DROP_MODIFIER);
 		KeyBindingHelper.registerKeyBinding(DEPOSIT_MODIFIER);
 		KeyBindingHelper.registerKeyBinding(RESTOCK_MODIFIER);
-
-		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
-			Item item = player.getMainHandStack().getItem();
-			int index = -1;
-			if (MWConfig.toolPicking.holdTool && (isTool(item) || isWeapon(item))) {
-				ToolPicker toolPicker = new ToolPicker(player.getInventory());
-				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
-					index = toolPicker.findToolFor(player.getWorld().getBlockState(((BlockHitResult) result).getBlockPos()));
-				} else {
-					index = toolPicker.findWeapon();
-				}
-			}
-			if (MWConfig.toolPicking.holdBlock && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
-				BlockState blockState = player.getWorld().getBlockState(((BlockHitResult) result).getBlockPos());
-				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
-					ToolPicker toolPicker = new ToolPicker(player.getInventory());
-					index = toolPicker.findToolFor(blockState);
-				}
-			}
-			return index == -1 || index == player.getInventory().selectedSlot ? ItemStack.EMPTY : player.getInventory().getStack(index);
-		});
 
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			CreativeSearchOrder.refreshItemSearchPositionLookup();
